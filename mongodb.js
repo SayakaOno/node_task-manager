@@ -1,10 +1,5 @@
 const { MongoClient, ObjectID } = require('mongodb');
 
-const id = new ObjectID();
-console.log(id.id);
-console.log(id.getTimestamp());
-console.log(id.toHexString().length);
-
 const connectionURL = 'mongodb://127.0.0.1:27017';
 const databaseName = 'task-manager';
 
@@ -18,43 +13,36 @@ MongoClient.connect(
 
     const db = client.db(databaseName);
 
-    db.collection('users').insertOne(
+    // db.collection('users').findOne(
+    //   { _id: new ObjectID('600da156cd173bb697164368') },
+    //   (error, user) => {
+    //     if (error) {
+    //       return console.log('Unable to fetch');
+    //     }
+
+    //     console.log(user);
+    //   }
+    // );
+
+    // db.collection('users')
+    //   .find({ age: 32 })
+    //   .toArray((error, users) => {
+    //     console.log(users);
+    //   });
+
+    db.collection('tasks').findOne(
       {
-        name: 'Vikram',
-        age: 32
+        _id: new ObjectID('600d9f1a42cf1ea239ee436c')
       },
-      (error, result) => {
-        if (error) {
-          return console.log('Unable to insert user');
-        }
-
-        console.log(result.ops);
+      (error, task) => {
+        console.log(task);
       }
     );
 
-    db.collection('users').insertMany(
-      [{ name: 'Jen', age: 28 }, { name: 'Gunteher', age: 27 }],
-      (error, result) => {
-        if (error) {
-          return console.log(error);
-        }
-        console.log(result.ops);
-      }
-    );
-
-    db.collection('tasks').insertMany(
-      [
-        { description: 'cleaning', completed: false },
-        { description: 'cooking', completed: false },
-        { description: 'studyin', completed: true }
-      ],
-      (error, result) => {
-        if (error) {
-          return console.log('Unable to insert tasks!');
-        }
-
-        console.log(result.ops);
-      }
-    );
+    db.collection('tasks')
+      .find({ completed: false })
+      .toArray((error, tasks) => {
+        console.log(tasks);
+      });
   }
 );
