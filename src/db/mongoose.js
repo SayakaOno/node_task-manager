@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
   useNewUrlParser: true,
@@ -7,14 +8,48 @@ mongoose.connect('mongodb://127.0.0.1:27017/task-manager-api', {
 
 const User = mongoose.model('User', {
   name: {
-    type: String
+    type: String,
+    required: true,
+    trim: true
+  },
+  email: {
+    type: String,
+    require: true,
+    trim: true,
+    lowercase: true,
+    validate(value) {
+      if (!validator.isEmail(value)) {
+        throw new Error('Email is invalid');
+      }
+    }
+  },
+  password: {
+    type: String,
+    required: true,
+    minLength: 7,
+    trim: true,
+    validate(value) {
+      if (validator.contains(value, 'password', { ignoreCase: true })) {
+        throw new Error("password cannot contain 'password'");
+      }
+    }
   },
   age: {
-    type: Number
+    type: Number,
+    default: 0,
+    validate(value) {
+      if (value < 0) {
+        throw new Error('Age must be a positive number');
+      }
+    }
   }
 });
 
-// const me = new User({ name: 'Sayaka', age: 32 });
+// const me = new User({
+//   name: '     Sayaka   ',
+//   email: 'SAYAKA@TEST.COM   ',
+//   password: 'testtest123'
+// });
 
 // me.save()
 //   .then(() => {
@@ -24,16 +59,18 @@ const User = mongoose.model('User', {
 
 const Task = mongoose.model('Task', {
   description: {
-    type: String
+    type: String,
+    required: true,
+    trim: true
   },
   completed: {
-    type: Boolean
+    type: Boolean,
+    default: false
   }
 });
 
 const task = new Task({
-  description: 'Cooking',
-  completed: false
+  description: '      book an appointment       '
 });
 
 task
