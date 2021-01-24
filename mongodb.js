@@ -13,5 +13,10 @@ MongoClient.connect(
     }
 
     const db = client.db(databaseName);
+
+    db.collection('users').insertOne({
+      name: 'Sayaka',
+      age: 32
+    });
   }
 );
